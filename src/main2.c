@@ -232,11 +232,11 @@ int main(int argc, char **argv) {
       PetscCall(PC_setup(&test2));
       PetscCall(PetscLogEventEnd(setUp, 0, 0, 0, 0));
       PetscCall(PetscPrintf(PETSC_COMM_WORLD, "Using GMsFEM\n"));
-      KSP kspCoarse, kspSmoother1, kspSmoother2;
-      PC pcCoarse, pcSmoother1, pcSmoother2;
-      // 设置三层multigrid
+      KSP kspCoarse, kspSmoother1;
+      PC pcCoarse, pcSmoother1;
+      // 设置二层multigrid
       PetscCall(PCSetType(pc, PCMG));
-      PetscCall(PCMGSetLevels(pc, 3, NULL));
+      PetscCall(PCMGSetLevels(pc, 2, NULL));
       // 设为V-cycle
       PetscCall(PCMGSetType(pc, PC_MG_MULTIPLICATIVE));
       PetscCall(PCMGSetCycleType(pc, PC_MG_CYCLE_V));
@@ -249,18 +249,12 @@ int main(int argc, char **argv) {
       PetscCall(PCFactorSetMatSolverType(pcCoarse, MATSOLVERSUPERLU_DIST));
       PetscCall(KSPSetErrorIfNotConverged(kspCoarse, PETSC_TRUE));
       // 设置一阶smoother
-      PetscCall(PCMGGetSmoother(pc, 2, &kspSmoother1));
+      PetscCall(PCMGGetSmoother(pc, 1, &kspSmoother1));
       PetscCall(KSPGetPC(kspSmoother1, &pcSmoother1));
       PetscCall(PCSetType(pcSmoother1, PCBJACOBI));
       PetscCall(KSPSetErrorIfNotConverged(kspSmoother1, PETSC_TRUE));
-      // 设置二阶smoother
-      PetscCall(PCMGGetSmoother(pc, 1, &kspSmoother2));
-      PetscCall(KSPGetPC(kspSmoother2, &pcSmoother2));
-      PetscCall(PCSetType(pcSmoother2, PCBJACOBI));
-      PetscCall(KSPSetErrorIfNotConverged(kspSmoother2, PETSC_TRUE));
       // 设置Prolongation
-      PetscCall(PCMGSetInterpolation(pc, 2, test2.Rc));
-      PetscCall(PCMGSetInterpolation(pc, 1, test2.Rcc));
+      PetscCall(PCMGSetInterpolation(pc, 1, test2.Rc));
       PetscCall(PCShellSetName(
           pc, "3levels-MG-via-GMsFEM-with-velocity-elimination"));
     } else {

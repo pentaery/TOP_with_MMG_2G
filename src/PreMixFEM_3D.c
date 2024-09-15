@@ -700,7 +700,7 @@ PetscErrorCode PC_setup(PCCtx *s_ctx) {
   }
 
   PetscCall(formRc(s_ctx, &int_ctx));
-  PetscCall(formRcc(s_ctx, &int_ctx));
+  // PetscCall(formRcc(s_ctx, &int_ctx));
 
   for (i = 0; i < DIM; ++i) {
     PetscCall(DMDAVecRestoreArrayRead(s_ctx->dm, kappa_loc[i],
@@ -728,11 +728,11 @@ PetscErrorCode PC_init(PCCtx *s_ctx, PetscScalar *dom, PetscInt *mesh) {
   s_ctx->N = mesh[1];
   s_ctx->P = mesh[2];
 
-  s_ctx->sub_domains = 2;
-  PetscCall(PetscOptionsGetInt(NULL, NULL, "-sd", &s_ctx->sub_domains, NULL));
-  PetscCheck(s_ctx->sub_domains >= 1, PETSC_COMM_WORLD, PETSC_ERR_ARG_WRONG,
-             "Error in sub_domains=%d.\n", s_ctx->sub_domains);
-  PetscCall(PetscPrintf(PETSC_COMM_WORLD, "sub_domains=%d\n", s_ctx->sub_domains));
+  s_ctx->sub_domains = 1;
+  // PetscCall(PetscOptionsGetInt(NULL, NULL, "-sd", &s_ctx->sub_domains, NULL));
+  // PetscCheck(s_ctx->sub_domains >= 1, PETSC_COMM_WORLD, PETSC_ERR_ARG_WRONG,
+  //            "Error in sub_domains=%d.\n", s_ctx->sub_domains);
+  // PetscCall(PetscPrintf(PETSC_COMM_WORLD, "sub_domains=%d\n", s_ctx->sub_domains));
   
   s_ctx->max_eigen_num_lv1 = 4;
   PetscCall(PetscOptionsGetInt(NULL, NULL, "-en_lv1", &s_ctx->max_eigen_num_lv1,
@@ -745,13 +745,13 @@ PetscErrorCode PC_init(PCCtx *s_ctx, PetscScalar *dom, PetscInt *mesh) {
 
   s_ctx->max_eigen_num_lv2 = 4;
 
-  PetscCall(PetscOptionsGetInt(NULL, NULL, "-en_lv2", &s_ctx->max_eigen_num_lv2,
-                               NULL));
-  PetscCheck(s_ctx->max_eigen_num_lv2 >= 1, PETSC_COMM_WORLD,
-             PETSC_ERR_ARG_WRONG,
-             "Error in max_eigen_num_lv2=%d for the level-2 problem.\n",
-             s_ctx->max_eigen_num_lv2);
-  PetscCall(PetscPrintf(PETSC_COMM_WORLD, "en_lv2=%d\n", s_ctx->max_eigen_num_lv2));
+  // PetscCall(PetscOptionsGetInt(NULL, NULL, "-en_lv2", &s_ctx->max_eigen_num_lv2,
+  //                              NULL));
+  // PetscCheck(s_ctx->max_eigen_num_lv2 >= 1, PETSC_COMM_WORLD,
+  //            PETSC_ERR_ARG_WRONG,
+  //            "Error in max_eigen_num_lv2=%d for the level-2 problem.\n",
+  //            s_ctx->max_eigen_num_lv2);
+  // PetscCall(PetscPrintf(PETSC_COMM_WORLD, "en_lv2=%d\n", s_ctx->max_eigen_num_lv2));
 
   s_ctx->lv2_eigen_op = EIG_OP_MOD;
   PetscCall(
@@ -777,13 +777,13 @@ PetscErrorCode PC_init(PCCtx *s_ctx, PetscScalar *dom, PetscInt *mesh) {
   for (PetscInt i = 0; i < DIM; ++i)
     PetscCall(DMCreateGlobalVector(s_ctx->dm, &s_ctx->kappa[i]));
 
-  if (s_ctx->sub_domains == 1) {
-    PetscCall(PetscPrintf(PETSC_COMM_WORLD,
-                          "The subdomain may not be proper (too "
-                          "long/wide/high), reset sub_domains from %d to 2.\n",
-                          s_ctx->sub_domains));
-    s_ctx->sub_domains = 2;
-  }
+  // if (s_ctx->sub_domains == 1) {
+  //   PetscCall(PetscPrintf(PETSC_COMM_WORLD,
+  //                         "The subdomain may not be proper (too "
+  //                         "long/wide/high), reset sub_domains from %d to 2.\n",
+  //                         s_ctx->sub_domains));
+  //   s_ctx->sub_domains = 2;
+  // }
   s_ctx->coarse_elem_num =
       s_ctx->sub_domains * s_ctx->sub_domains * s_ctx->sub_domains;
 
@@ -827,8 +827,8 @@ PetscErrorCode PC_init(PCCtx *s_ctx, PetscScalar *dom, PetscInt *mesh) {
   PetscInt m, n;
   PetscCall(MatGetSize(s_ctx->Rc, &m, &n));
   PetscCall(PetscPrintf(PETSC_COMM_WORLD, "m1=%d, n1=%d\n", m, n));
-  PetscCall(MatGetSize(s_ctx->Rcc, &m, &n));
-  PetscCall(PetscPrintf(PETSC_COMM_WORLD, "m1=%d, n1=%d\n", m, n));
+  // PetscCall(MatGetSize(s_ctx->Rcc, &m, &n));
+  // PetscCall(PetscPrintf(PETSC_COMM_WORLD, "m1=%d, n1=%d\n", m, n));
 
   PetscFunctionReturn(0);
 }
@@ -845,7 +845,7 @@ PetscErrorCode PC_final(PCCtx *s_ctx) {
   PetscCall(PetscFree(s_ctx->eigen_max_lv1));
   PetscCall(PetscFree(s_ctx->eigen_min_lv1));
   PetscCall(MatDestroy(&s_ctx->Rc));
-  PetscCall(MatDestroy(&s_ctx->Rcc));
+  // PetscCall(MatDestroy(&s_ctx->Rcc));
   // PetscCall(VecDestroy(&s_ctx->boundary));
   PetscInt i = 0;
   for (i = 0; i < DIM; ++i)
